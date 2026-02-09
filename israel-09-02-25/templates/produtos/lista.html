@@ -1,0 +1,8 @@
+<!-- lista.html -->
+{% for product in produtos %} {{ product.nome }} - {{ product.preco }} - 
+{{ product.descricao }} - {{ product.quantidade }} - {{ product.preco_de_compra }}
+- {{ product.preco_de_venda }} - {{ product.data_validade }}
+<a href="{% url 'editar_produto' product.pk %}">Editar</a>
+<a href="{% url 'excluir_produto' product.pk %}">Excluir</a>
+<br />
+{% endfor %}
