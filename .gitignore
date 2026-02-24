@@ -138,15 +138,3 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
-
-#GIT
-config
-description
-HEAD
-index
-packed-refs
-hooks/
-logs/
-info/
-objects/
-refs/
