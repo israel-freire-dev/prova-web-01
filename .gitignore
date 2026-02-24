@@ -140,13 +140,13 @@ GitHub.sublime-settings
 .history
 
 #GIT
-./config
-./description
-./HEAD
-./index
-./packed-refs
-./hooks/
-./logs/
-./info/
-./objects/
-./refs/
+config
+description
+HEAD
+index
+packed-refs
+hooks/
+logs/
+info/
+objects/
+refs/
