@@ -1,0 +1,7 @@
+<!-- lista.html -->
+{% for f in fornecedores %}
+  {{ f.nome }} - {{ f.cnpj }} - {{ f.cidade }}/{{ f.estado }} - {{ f.email }} - {{ f.telefone }}
+  {% if f.is_active %}(Ativo){% else %}(Inativo){% endif %}
+  <a href="{% url 'editar_fornecedor' f.pk %}">Editar</a>
+  <a href="{% url 'excluir_fornecedor' f.pk %}">Excluir</a>
+{% endfor %}
