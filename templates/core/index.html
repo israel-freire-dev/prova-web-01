@@ -1,7 +1,18 @@
- <!-- index.html -->
-<h1>Bem-vindo ao Gerenciador</h1>
-<a href="{% url 'listar_clientes' %}">Gerenciar Clientes</a>
-<br />
-<a href="{% url 'listar_produtos' %}">Gerenciar Produtos</a> 
-<br />
-<a href="{% url 'listar_fornecedores' %}">Gerenciar Fornecedores</a>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GestorPro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-white flex">
+  {% include "componentes/sidebar.html" %}
+
+  <main class="flex-1 flex items-center justify-center min-h-screen">
+    <h1 class="text-4xl md:text-5xl lg:text-6xl font-semibold text-gray-800 text-center px-4">
+      Bem-vindo ao GestorPro
+    </h1>
+  </main>
+</body>
+</html>
