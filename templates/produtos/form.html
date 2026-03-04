@@ -1,6 +1,66 @@
-<!-- form.html -->
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Salvar</button>
-</form>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cadastro e edição de produtos no GestorPro.">
+  <meta name="keywords" content="GestorPro, produtos, cadastro, edição">
+  <title>Produtos • GestorPro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 flex">
+  {% include "componentes/sidebar.html" %}
+
+  <main class="flex-1 p-6 lg:p-10">
+    <div class="max-w-3xl mx-auto">
+      <div class="flex items-start sm:items-center justify-between gap-4 mb-6">
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-900">Produto</h1>
+          <p class="text-sm text-gray-600 mt-1">Preencha os dados do produto.</p>
+        </div>
+      </div>
+
+      <section class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-200">
+          <p class="text-sm font-medium text-gray-900">Dados do produto</p>
+        </div>
+
+        <div class="px-5 py-6">
+          <form method="post" class="space-y-6">
+            {% csrf_token %}
+
+            <div class="space-y-5">
+              {% for field in form %}
+                <div>
+                  <label for="{{ field.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">
+                    {{ field.label }}
+                  </label>
+                  {{ field }}
+                  {% if field.errors %}
+                    <p class="mt-1.5 text-sm text-red-600">{{ field.errors.0 }}</p>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="flex items-center justify-end gap-3 pt-2">
+              <a
+                href="{% url "listar_produtos" %}"
+                class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 transition-colors"
+              >
+                Cancelar
+              </a>
+              <button
+                type="submit"
+                class="inline-flex items-center rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
+              >
+                Salvar
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
