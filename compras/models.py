@@ -1,0 +1,84 @@
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
+from django.db import models
+from django.utils import timezone
+
+from fornecedores.models import Fornecedor
+from produtos.models import Produto
+
+
+class Compra(models.Model):
+    class Status(models.TextChoices):
+        RASCUNHO = "RASCUNHO", "Rascunho"
+        CONFIRMADA = "CONFIRMADA", "Confirmada"
+        CANCELADA = "CANCELADA", "Cancelada"
+
+    data = models.DateField(verbose_name="Data da compra", default=timezone.now)
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.RASCUNHO,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"Compra #{self.pk or 'novo'} ({self.get_status_display()}) - {self.data}"
+
+    @property
+    def is_editable(self) -> bool:
+        return self.status == self.Status.RASCUNHO
+
+
+class CompraFornecedor(models.Model):
+    compra = models.ForeignKey(Compra, on_delete=models.CASCADE, related_name="grupos")
+    fornecedor = models.ForeignKey(Fornecedor, on_delete=models.PROTECT)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["compra", "fornecedor"],
+                name="uniq_compra_fornecedor_grupo",
+            )
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.compra} - {self.fornecedor}"
+
+    def clean(self) -> None:
+        super().clean()
+        if self.compra_id and not self.compra.is_editable:
+            raise ValidationError("Não é possível alterar fornecedores em compra não rascunho.")
+
+
+class ItemCompra(models.Model):
+    compra_fornecedor = models.ForeignKey(
+        CompraFornecedor, on_delete=models.CASCADE, related_name="itens"
+    )
+    produto = models.ForeignKey(Produto, on_delete=models.PROTECT)
+    quantidade = models.PositiveIntegerField(
+        verbose_name="Quantidade",
+        validators=[MinValueValidator(1, "A quantidade deve ser maior ou igual a 1")],
+    )
+    preco_unitario = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0.01, "O preço unitário deve ser maior que zero")],
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["compra_fornecedor", "produto"],
+                name="uniq_item_por_produto_no_fornecedor",
+            )
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.produto} x{self.quantidade}"
+
+    def clean(self) -> None:
+        super().clean()
+        compra = getattr(self.compra_fornecedor, "compra", None)
+        if compra and not compra.is_editable:
+            raise ValidationError("Não é possível alterar itens em compra não rascunho.")
