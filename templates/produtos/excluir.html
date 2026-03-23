@@ -1,6 +1,51 @@
-<!-- excluir.html -->
-<p>Deseja excluir {{ object.nome }}?</p>
-<form method="post">
-  {% csrf_token %}
-  <button type="submit">Excluir</button>
-</form>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Confirmação de exclusão de produto no GestorPro.">
+  <meta name="keywords" content="GestorPro, produtos, exclusão">
+  <title>Excluir produto • GestorPro</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 flex">
+  {% include "componentes/sidebar.html" %}
+
+  <main class="flex-1 p-6 lg:p-10">
+    <div class="max-w-xl mx-auto">
+      <section class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <div class="px-5 py-4 border-b border-gray-200">
+          <h1 class="text-base font-semibold text-gray-900">Excluir produto</h1>
+        </div>
+
+        <div class="px-5 py-6 space-y-4">
+          <p class="text-sm text-gray-700">
+            Tem certeza que deseja excluir o produto
+            <span class="font-semibold">"{{ object.nome }}"</span>?
+          </p>
+          <p class="text-xs text-gray-500">
+            Esta ação não poderá ser desfeita.
+          </p>
+
+          <form method="post" class="flex items-center justify-end gap-3 pt-2">
+            {% csrf_token %}
+            <a
+              href="{% url "listar_produtos" %}"
+              class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 transition-colors"
+            >
+              Cancelar
+            </a>
+            <button
+              type="submit"
+              class="inline-flex items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-500 transition-colors"
+            >
+              Excluir
+            </button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
+

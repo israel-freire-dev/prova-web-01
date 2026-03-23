@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Confirmação de exclusão de fornecedor no GestorPro.">
-  <meta name="keywords" content="GestorPro, fornecedores, exclusão">
-  <title>Excluir fornecedor • GestorPro</title>
+  <title>Excluir compra • GestorPro</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-gray-50 flex">
@@ -15,22 +13,22 @@
     <div class="max-w-xl mx-auto">
       <section class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
         <div class="px-5 py-4 border-b border-gray-200">
-          <h1 class="text-base font-semibold text-gray-900">Excluir fornecedor</h1>
+          <h1 class="text-base font-semibold text-gray-900">Excluir compra #{{ object.pk }}</h1>
         </div>
 
         <div class="px-5 py-6 space-y-4">
           <p class="text-sm text-gray-700">
-            Tem certeza que deseja excluir o fornecedor
-            <span class="font-semibold">"{{ object.nome }}"</span>?
+            Tem certeza que deseja excluir esta compra do dia
+            <span class="font-semibold">{{ object.data|date:"d/m/Y" }}</span>?
           </p>
           <p class="text-xs text-gray-500">
-            Esta ação não poderá ser desfeita.
+            Esta ação não poderá ser desfeita. Todos os grupos de fornecedores e itens desta compra serão excluídos.
           </p>
 
           <form method="post" class="flex items-center justify-end gap-3 pt-2">
             {% csrf_token %}
             <a
-              href="{% url "listar_fornecedores" %}"
+              href="{% url "listar_compras" %}"
               class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 transition-colors"
             >
               Cancelar
@@ -48,4 +46,3 @@
   </main>
 </body>
 </html>
-

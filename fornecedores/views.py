@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
 from .models import Fornecedor
+from .forms import FornecedorForm
 from rest_framework.decorators import api_view
 from .serializers import FornecedorSerializer
 from rest_framework.response import Response
@@ -19,14 +20,14 @@ class FornecedorListView(ListView):
 
 class FornecedorCreateView(CreateView):
     model = Fornecedor
-    fields = ("nome", "telefone", "email", "categoria", "cidade", "estado", "cnpj", "is_active")
+    form_class = FornecedorForm
     template_name = "fornecedores/form.html"
     success_url = reverse_lazy("listar_fornecedores")
 
 
 class FornecedorUpdateView(UpdateView):
     model = Fornecedor
-    fields = ("nome", "telefone", "email", "categoria", "cidade", "estado", "cnpj", "is_active")
+    form_class = FornecedorForm
     template_name = "fornecedores/form.html"
     success_url = reverse_lazy("listar_fornecedores")
 
