@@ -14,5 +14,5 @@ urlpatterns = [
     path("fornecedores/adicionar/", FornecedorCreateView.as_view(), name="criar_fornecedor"),
     path("fornecedores/editar/<int:pk>/", FornecedorUpdateView.as_view(), name="editar_fornecedor"),
     path("fornecedores/excluir/<int:pk>/", FornecedorDeleteView.as_view(), name="excluir_fornecedor"),
-    path("public/fornecedores/", views.get_fornecedores, name="get_fornecedores"),
+    path("fornecedores/public/api/", views.get_fornecedores, name="get_fornecedores"),
 ]
