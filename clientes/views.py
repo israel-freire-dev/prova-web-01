@@ -47,10 +47,48 @@ class ClienteViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 def get_clientes(request):
+    clientes = Cliente.objects.all()
+    serializer = ClienteSerializer(clientes, many=True)
+    return Response(serializer.data)
 
-    if request.method == 'GET': 
-       clientes = Cliente.objects.all()
-       serializer = ClienteSerializer(clientes, many=True)
-       return Response(serializer.data)
 
-    return Response(status.HTTP_404_NOT_FOUND)
+@api_view(['GET'])
+def get_cliente(request, pk):
+    try:
+        cliente = Cliente.objects.get(pk=pk)
+    except Cliente.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    serializer = ClienteSerializer(cliente)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def post_cliente(request):
+    serializer = ClienteSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+def put_cliente(request, pk):
+    try:
+        cliente = Cliente.objects.get(pk=pk)
+    except Cliente.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    serializer = ClienteSerializer(cliente, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+def delete_cliente(request, pk):
+    try:
+        cliente = Cliente.objects.get(pk=pk)
+    except Cliente.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    cliente.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)

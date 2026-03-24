@@ -50,6 +50,27 @@ def post_cancelar_compra(request, compra_id: int):
     return Response(CompraSerializer(compra).data)
 
 
+@api_view(["POST"])
+def post_confirmar_entrega(request, compra_id: int):
+    try:
+        compra = confirmar_entrega(compra_id)
+    except Compra.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    except ValidationError as e:
+        return Response({"detail": e.message}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(CompraSerializer(compra).data)
+
+
+@api_view(["GET"])
+def get_compra(request, compra_id: int):
+    try:
+        compra = Compra.objects.get(pk=compra_id)
+    except Compra.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    return Response(CompraSerializer(compra).data)
+
+
 from django.http import JsonResponse
 from produtos.models import Produto
 

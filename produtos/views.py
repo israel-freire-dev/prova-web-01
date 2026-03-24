@@ -46,10 +46,48 @@ class ProdutoViewSet(viewsets.ModelViewSet):
 
 @api_view(['GET'])
 def get_produtos(request):
+    produtos = Produto.objects.all()
+    serializer = ProdutoSerializer(produtos, many=True)
+    return Response(serializer.data)
 
-    if request.method == 'GET': 
-       produtos = Produto.objects.all()
-       serializer = ProdutoSerializer(produtos, many=True)
-       return Response(serializer.data)
 
-    return Response(status.HTTP_404_NOT_FOUND)
+@api_view(['GET'])
+def get_produto(request, pk):
+    try:
+        produto = Produto.objects.get(pk=pk)
+    except Produto.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    serializer = ProdutoSerializer(produto)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def post_produto(request):
+    serializer = ProdutoSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+def put_produto(request, pk):
+    try:
+        produto = Produto.objects.get(pk=pk)
+    except Produto.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    serializer = ProdutoSerializer(produto, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['DELETE'])
+def delete_produto(request, pk):
+    try:
+        produto = Produto.objects.get(pk=pk)
+    except Produto.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    produto.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)

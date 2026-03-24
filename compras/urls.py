@@ -22,10 +22,16 @@ urlpatterns = [
 
     # --- API Views ---
     path("public/compras/", views.get_compras, name="get_compras"),
+    path("public/compras/<int:compra_id>/", views.get_compra, name="get_compra"),
     path(
         "public/compras/<int:compra_id>/confirmar/",
         views.post_confirmar_compra,
         name="confirmar_compra",
+    ),
+    path(
+        "public/compras/<int:compra_id>/confirmar-entrega/",
+        views.post_confirmar_entrega,
+        name="confirmar_entrega",
     ),
     path(
         "public/compras/<int:compra_id>/cancelar/",
