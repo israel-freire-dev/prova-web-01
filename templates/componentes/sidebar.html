@@ -59,4 +59,27 @@
       </li>
     </ul>
   </nav>
+
+  {% comment %} Footer: User Profile / Logout {% endcomment %}
+  {% if user.is_authenticated %}
+  <div class="p-4 mt-auto border-t border-white/10">
+    <div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
+      <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm shrink-0">
+        {{ user.username|make_list|first|upper }}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-medium text-white truncate">{{ user.username }}</p>
+        <p class="text-xs text-white/60 truncate">Gestor</p>
+      </div>
+      <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="text-white/60 hover:text-red-400 transition-colors p-1" title="Sair do sistema">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
 </aside>

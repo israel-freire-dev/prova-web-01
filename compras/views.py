@@ -4,6 +4,8 @@ from django.shortcuts import get_object_or_404, redirect  # pyright: ignore[repo
 from django.urls import reverse_lazy  # pyright: ignore[reportMissingImports]
 from django.views.decorators.http import require_POST  # pyright: ignore[reportMissingImports]
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView  # pyright: ignore[reportMissingImports]
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 from rest_framework import status  # pyright: ignore[reportMissingImports]
 from rest_framework.decorators import api_view  # pyright: ignore[reportMissingImports]
@@ -50,14 +52,14 @@ def post_cancelar_compra(request, compra_id: int):
 
 # --- Template Views ---
 
-class CompraListView(ListView):
+class CompraListView(LoginRequiredMixin, ListView):
     model = Compra
     template_name = "compras/lista.html"
     context_object_name = "compras"
     ordering = ["-id"]
 
 
-class CompraCreateView(CreateView):
+class CompraCreateView(LoginRequiredMixin, CreateView):
     model = Compra
     form_class = CompraForm
     template_name = "compras/form.html"
@@ -66,7 +68,7 @@ class CompraCreateView(CreateView):
         return reverse_lazy("detalhes_compra", kwargs={"pk": self.object.pk})
 
 
-class CompraUpdateView(UpdateView):
+class CompraUpdateView(LoginRequiredMixin, UpdateView):
     model = Compra
     form_class = CompraForm
     template_name = "compras/form.html"
@@ -82,7 +84,7 @@ class CompraUpdateView(UpdateView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class CompraDeleteView(DeleteView):
+class CompraDeleteView(LoginRequiredMixin, DeleteView):
     model = Compra
     template_name = "compras/excluir.html"
     success_url = reverse_lazy("listar_compras")
@@ -95,7 +97,7 @@ class CompraDeleteView(DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
 
-class CompraDetailView(DetailView):
+class CompraDetailView(LoginRequiredMixin, DetailView):
     model = Compra
     template_name = "compras/detalhe.html"
 
@@ -113,6 +115,7 @@ class CompraDetailView(DetailView):
         return context
 
 
+@login_required
 @require_POST
 def adicionar_fornecedor(request, pk):
     compra = get_object_or_404(Compra, pk=pk)
@@ -136,6 +139,7 @@ def adicionar_fornecedor(request, pk):
     return redirect("detalhes_compra", pk=pk)
 
 
+@login_required
 @require_POST
 def remover_fornecedor(request, compra_pk, grupo_pk):
     grupo = get_object_or_404(CompraFornecedor, pk=grupo_pk, compra_id=compra_pk)
@@ -149,6 +153,7 @@ def remover_fornecedor(request, compra_pk, grupo_pk):
     return redirect("detalhes_compra", pk=compra_pk)
 
 
+@login_required
 @require_POST
 def adicionar_item(request, compra_pk, grupo_pk):
     grupo = get_object_or_404(CompraFornecedor, pk=grupo_pk, compra_id=compra_pk)
@@ -171,6 +176,7 @@ def adicionar_item(request, compra_pk, grupo_pk):
     return redirect("detalhes_compra", pk=compra_pk)
 
 
+@login_required
 @require_POST
 def remover_item(request, compra_pk, item_pk):
     item = get_object_or_404(ItemCompra, pk=item_pk, compra_fornecedor__compra_id=compra_pk)
@@ -184,6 +190,7 @@ def remover_item(request, compra_pk, item_pk):
     return redirect("detalhes_compra", pk=compra_pk)
 
 
+@login_required
 @require_POST
 def confirmar_compra_view(request, pk):
     try:
@@ -197,6 +204,7 @@ def confirmar_compra_view(request, pk):
     return redirect("detalhes_compra", pk=pk)
 
 
+@login_required
 @require_POST
 def cancelar_compra_view(request, pk):
     try:

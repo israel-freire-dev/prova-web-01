@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Fornecedor
 from .forms import FornecedorForm
@@ -12,27 +13,27 @@ from rest_framework import viewsets
 
 
 # Create your views here.
-class FornecedorListView(ListView):
+class FornecedorListView(LoginRequiredMixin, ListView):
     model = Fornecedor
     template_name = "fornecedores/lista.html"
     context_object_name = "fornecedores"
 
 
-class FornecedorCreateView(CreateView):
+class FornecedorCreateView(LoginRequiredMixin, CreateView):
     model = Fornecedor
     form_class = FornecedorForm
     template_name = "fornecedores/form.html"
     success_url = reverse_lazy("listar_fornecedores")
 
 
-class FornecedorUpdateView(UpdateView):
+class FornecedorUpdateView(LoginRequiredMixin, UpdateView):
     model = Fornecedor
     form_class = FornecedorForm
     template_name = "fornecedores/form.html"
     success_url = reverse_lazy("listar_fornecedores")
 
 
-class FornecedorDeleteView(DeleteView):
+class FornecedorDeleteView(LoginRequiredMixin, DeleteView):
     model = Fornecedor
     template_name = "fornecedores/excluir.html"
     success_url = reverse_lazy("listar_fornecedores")
