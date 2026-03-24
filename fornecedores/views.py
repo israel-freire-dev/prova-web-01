@@ -10,6 +10,7 @@ from .serializers import FornecedorSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
+from drf_spectacular.utils import extend_schema
 
 
 # Create your views here.
@@ -46,6 +47,7 @@ class FornecedorViewSet(viewsets.ModelViewSet):
     serializer_class = FornecedorSerializer
 
 
+@extend_schema(tags=['Fornecedores'])
 @api_view(['GET'])
 def get_fornecedores(request):
     fornecedores = Fornecedor.objects.all()
@@ -53,6 +55,7 @@ def get_fornecedores(request):
     return Response(serializer.data)
 
 
+@extend_schema(tags=['Fornecedores'])
 @api_view(['GET'])
 def get_fornecedor(request, pk):
     try:
@@ -63,6 +66,7 @@ def get_fornecedor(request, pk):
     return Response(serializer.data)
 
 
+@extend_schema(tags=['Fornecedores'], request=FornecedorSerializer, responses=FornecedorSerializer)
 @api_view(['POST'])
 def post_fornecedor(request):
     serializer = FornecedorSerializer(data=request.data)
@@ -72,6 +76,7 @@ def post_fornecedor(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=['Fornecedores'], request=FornecedorSerializer, responses=FornecedorSerializer)
 @api_view(['PUT'])
 def put_fornecedor(request, pk):
     try:
@@ -85,6 +90,7 @@ def put_fornecedor(request, pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=['Fornecedores'])
 @api_view(['DELETE'])
 def delete_fornecedor(request, pk):
     try:

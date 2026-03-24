@@ -9,6 +9,7 @@ from .serializers import ClienteSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
+from drf_spectacular.utils import extend_schema
 
 # Create your views here.
 class ClienteListView(LoginRequiredMixin, ListView):
@@ -45,6 +46,7 @@ class ClienteViewSet(viewsets.ModelViewSet):
     serializer_class = ClienteSerializer
 
 
+@extend_schema(tags=['Clientes'])
 @api_view(['GET'])
 def get_clientes(request):
     clientes = Cliente.objects.all()
@@ -52,6 +54,7 @@ def get_clientes(request):
     return Response(serializer.data)
 
 
+@extend_schema(tags=['Clientes'])
 @api_view(['GET'])
 def get_cliente(request, pk):
     try:
@@ -62,6 +65,7 @@ def get_cliente(request, pk):
     return Response(serializer.data)
 
 
+@extend_schema(tags=['Clientes'], request=ClienteSerializer, responses=ClienteSerializer)
 @api_view(['POST'])
 def post_cliente(request):
     serializer = ClienteSerializer(data=request.data)
@@ -71,6 +75,7 @@ def post_cliente(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=['Clientes'], request=ClienteSerializer, responses=ClienteSerializer)
 @api_view(['PUT'])
 def put_cliente(request, pk):
     try:
@@ -84,6 +89,7 @@ def put_cliente(request, pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=['Clientes'])
 @api_view(['DELETE'])
 def delete_cliente(request, pk):
     try:

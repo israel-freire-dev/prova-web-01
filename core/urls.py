@@ -20,6 +20,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from core.views import IndexView, CadastroView
 from core.forms import CustomAuthenticationForm
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 
 urlpatterns = [ 
@@ -36,4 +37,9 @@ urlpatterns = [
     path('', include('produtos.urls')),
     path('', include('fornecedores.urls')),
     path('', include('compras.urls')),
+
+    # Swagger / OpenAPI
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]

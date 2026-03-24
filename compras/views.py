@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from rest_framework import status  # pyright: ignore[reportMissingImports]
 from rest_framework.decorators import api_view  # pyright: ignore[reportMissingImports]
 from rest_framework.response import Response  # pyright: ignore[reportMissingImports]
+from drf_spectacular.utils import extend_schema
 
 from .forms import CompraForm, ItemCompraForm
 from .models import Compra, ItemCompra
@@ -19,6 +20,7 @@ from .services import cancelar_compra, confirmar_compra, confirmar_entrega
 
 # --- API Views ---
 
+@extend_schema(tags=['Ordens de Compra'])
 @api_view(["GET"])
 def get_compras(request):
     compras = Compra.objects.all().order_by("-id")
@@ -26,6 +28,7 @@ def get_compras(request):
     return Response(serializer.data)
 
 
+@extend_schema(tags=['Ordens de Compra'])
 @api_view(["POST"])
 def post_confirmar_compra(request, compra_id: int):
     try:
@@ -38,6 +41,7 @@ def post_confirmar_compra(request, compra_id: int):
     return Response(CompraSerializer(compra).data)
 
 
+@extend_schema(tags=['Ordens de Compra'])
 @api_view(["POST"])
 def post_cancelar_compra(request, compra_id: int):
     try:
@@ -50,6 +54,7 @@ def post_cancelar_compra(request, compra_id: int):
     return Response(CompraSerializer(compra).data)
 
 
+@extend_schema(tags=['Ordens de Compra'])
 @api_view(["POST"])
 def post_confirmar_entrega(request, compra_id: int):
     try:
@@ -62,6 +67,7 @@ def post_confirmar_entrega(request, compra_id: int):
     return Response(CompraSerializer(compra).data)
 
 
+@extend_schema(tags=['Ordens de Compra'])
 @api_view(["GET"])
 def get_compra(request, compra_id: int):
     try:

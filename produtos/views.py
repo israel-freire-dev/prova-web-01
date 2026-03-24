@@ -9,6 +9,7 @@ from .serializers import ProdutoSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
+from drf_spectacular.utils import extend_schema
 
 # Create your views here.
 class ProdutoListView(LoginRequiredMixin, ListView):
@@ -44,6 +45,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     serializer_class = ProdutoSerializer
 
 
+@extend_schema(tags=['Produtos'])
 @api_view(['GET'])
 def get_produtos(request):
     produtos = Produto.objects.all()
@@ -51,6 +53,7 @@ def get_produtos(request):
     return Response(serializer.data)
 
 
+@extend_schema(tags=['Produtos'])
 @api_view(['GET'])
 def get_produto(request, pk):
     try:
@@ -61,6 +64,7 @@ def get_produto(request, pk):
     return Response(serializer.data)
 
 
+@extend_schema(tags=['Produtos'], request=ProdutoSerializer, responses=ProdutoSerializer)
 @api_view(['POST'])
 def post_produto(request):
     serializer = ProdutoSerializer(data=request.data)
@@ -70,6 +74,7 @@ def post_produto(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=['Produtos'], request=ProdutoSerializer, responses=ProdutoSerializer)
 @api_view(['PUT'])
 def put_produto(request, pk):
     try:
@@ -83,6 +88,7 @@ def put_produto(request, pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=['Produtos'])
 @api_view(['DELETE'])
 def delete_produto(request, pk):
     try:
