@@ -35,7 +35,13 @@
             <thead class="bg-gray-50">
               <tr>
                 <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nome</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">CPF</th>
                 <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Email</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Contato</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Localidade</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Cadastro</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Obs.</th>
                 <th scope="col" class="px-5 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Ações</th>
               </tr>
             </thead>
@@ -46,7 +52,39 @@
                     <div class="font-medium text-gray-900">{{ c.nome }}</div>
                   </td>
                   <td class="px-5 py-4 whitespace-nowrap">
-                    <div class="text-gray-700">{{ c.email }}</div>
+                    <div class="text-sm text-gray-900">{{ c.cpf|default:"-" }}</div>
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-700">{{ c.email }}</div>
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-700">{{ c.telefone|default:"-" }}</div>
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-700">
+                      {% if c.cidade and c.estado %}
+                        {{ c.cidade }} - {{ c.estado }}
+                      {% else %}
+                        -
+                      {% endif %}
+                    </div>
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap">
+                    {% if c.ativo %}
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Ativo
+                      </span>
+                    {% else %}
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        Inativo
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-700">{{ c.data_cadastro|date:"d/m/Y" }}</div>
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap max-w-[150px] truncate" title="{{ c.observacoes }}">
+                    <div class="text-sm text-gray-700">{{ c.observacoes|default:"-"|truncatechars:20 }}</div>
                   </td>
                   <td class="px-5 py-4 whitespace-nowrap">
                     <div class="flex items-center justify-end gap-2">
@@ -67,7 +105,7 @@
                 </tr>
               {% empty %}
                 <tr>
-                  <td colspan="3" class="px-5 py-10 text-center">
+                  <td colspan="9" class="px-5 py-10 text-center">
                     <p class="text-sm text-gray-600">Nenhum cliente cadastrado ainda.</p>
                     <a
                       href="{% url "criar_cliente" %}"

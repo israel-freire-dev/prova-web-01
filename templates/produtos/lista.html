@@ -36,10 +36,13 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nome</th>
-                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Preço</th>
-                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantidade</th>
-                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Data de validade</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Produto / Detalhes</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">SKU & Fornecedor</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Financeiro</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Estoque</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Estoque Mín.</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Unidade</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
                 <th scope="col" class="px-5 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Ações</th>
               </tr>
             </thead>
@@ -48,15 +51,42 @@
                 <tr class="hover:bg-gray-50 transition-colors">
                   <td class="px-5 py-4 whitespace-nowrap">
                     <div class="font-medium text-gray-900">{{ p.nome }}</div>
+                    <div class="text-xs text-gray-500">
+                      {{ p.categoria|default:"S/ Cat" }} • {{ p.marca|default:"S/ Marca" }}
+                    </div>
                   </td>
                   <td class="px-5 py-4 whitespace-nowrap">
-                    <div class="text-gray-700">R$ {{ p.preco }}</div>
+                    <div class="text-sm text-gray-900">{{ p.codigo|default:"-" }}</div>
+                    <div class="text-xs text-gray-500 max-w-[120px] truncate" title="{{ p.fornecedor.nome|default:'-' }}">{{ p.fornecedor.nome|default:"-" }}</div>
                   </td>
                   <td class="px-5 py-4 whitespace-nowrap">
-                    <div class="text-gray-700">{{ p.quantidade }}</div>
+                    <div class="text-sm font-medium text-green-700">Venda: R$ {{ p.preco_venda }}</div>
+                    <div class="text-xs text-gray-500">Custo: R$ {{ p.preco_custo|default:"0,00" }}</div>
                   </td>
                   <td class="px-5 py-4 whitespace-nowrap">
-                    <div class="text-gray-700">{{ p.data_validade }}</div>
+                    <div class="text-sm text-gray-900">
+                      <span class="font-medium {% if p.quantidade <= p.estoque_minimo %}text-red-600{% endif %}">{{ p.quantidade }}</span>
+                    </div>
+                    {% if p.data_validade %}
+                      <div class="text-xs text-gray-500">Val: {{ p.data_validade|date:"d/m/Y" }}</div>
+                    {% endif %}
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap">
+                    <div class="text-sm font-medium text-gray-700">{{ p.estoque_minimo|default:"0" }}</div>
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap">
+                    <div class="text-sm font-medium text-gray-700">{{ p.unidade_medida|default:"-" }}</div>
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap">
+                    {% if p.ativo %}
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Ativo
+                      </span>
+                    {% else %}
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        Inativo
+                      </span>
+                    {% endif %}
                   </td>
                   <td class="px-5 py-4 whitespace-nowrap">
                     <div class="flex items-center justify-end gap-2">
@@ -77,7 +107,7 @@
                 </tr>
               {% empty %}
                 <tr>
-                  <td colspan="5" class="px-5 py-10 text-center">
+                  <td colspan="8" class="px-5 py-10 text-center">
                     <p class="text-sm text-gray-600">Nenhum produto cadastrado ainda.</p>
                     <a
                       href="{% url "criar_produto" %}"

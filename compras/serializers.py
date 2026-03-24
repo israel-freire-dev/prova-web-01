@@ -1,26 +1,18 @@
 from rest_framework import serializers
 
-from .models import Compra, CompraFornecedor, ItemCompra
+from .models import Compra, ItemCompra
 
 
 class ItemCompraSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemCompra
-        fields = ["id", "produto", "quantidade", "preco_unitario", "compra_fornecedor"]
-
-
-class CompraFornecedorSerializer(serializers.ModelSerializer):
-    itens = ItemCompraSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = CompraFornecedor
-        fields = ["id", "compra", "fornecedor", "itens"]
+        fields = ["id", "produto", "quantidade", "preco_unitario", "compra"]
 
 
 class CompraSerializer(serializers.ModelSerializer):
-    grupos = CompraFornecedorSerializer(many=True, read_only=True)
+    itens = ItemCompraSerializer(many=True, read_only=True)
 
     class Meta:
         model = Compra
-        fields = ["id", "data", "status", "grupos", "created_at", "updated_at"]
+        fields = ["id", "fornecedor", "data", "status", "itens", "created_at", "updated_at"]
 

@@ -17,16 +17,29 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from core.views import IndexView
-
+from django.contrib.auth import views as auth_views
+from core.views import IndexView, CadastroView
+from core.forms import CustomAuthenticationForm
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 
 
 urlpatterns = [ 
     path('admin/', admin.site.urls),
+    
+    # Auth URLs
+    path('login/', auth_views.LoginView.as_view(template_name='core/login.html', authentication_form=CustomAuthenticationForm, redirect_authenticated_user=True), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('cadastro/', CadastroView.as_view(), name='cadastro'),
+    
     path('', IndexView.as_view(), name='index'),
     path('api-auth/', include('rest_framework.urls')),
     path('', include('clientes.urls')),
     path('', include('produtos.urls')),
     path('', include('fornecedores.urls')),
     path('', include('compras.urls')),
+
+    # Swagger / OpenAPI
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]

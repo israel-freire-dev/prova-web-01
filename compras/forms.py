@@ -1,6 +1,6 @@
 from django.forms import DateInput, ModelForm, NumberInput, Select
 
-from .models import Compra, CompraFornecedor, ItemCompra
+from .models import Compra, ItemCompra
 
 INPUT_CLASS = (
     "w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 "
@@ -11,21 +11,19 @@ INPUT_CLASS = (
 class CompraForm(ModelForm):
     class Meta:
         model = Compra
-        fields = ["data"]
+        fields = ["fornecedor", "data"]
         widgets = {
+            "fornecedor": Select(attrs={"class": INPUT_CLASS}),
             "data": DateInput(
                 attrs={"class": INPUT_CLASS, "type": "date"}
             ),
         }
 
-
-class CompraFornecedorForm(ModelForm):
-    class Meta:
-        model = CompraFornecedor
-        fields = ["fornecedor"]
-        widgets = {
-            "fornecedor": Select(attrs={"class": INPUT_CLASS}),
-        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Se for editar, não permite mudar o fornecedor
+        if self.instance and self.instance.pk:
+            self.fields['fornecedor'].disabled = True
 
 
 class ItemCompraForm(ModelForm):

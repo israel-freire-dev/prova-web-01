@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Detalhes da Compra #{{ object.pk }} • GestorPro</title>
+  <title>Ordem de Compra #{{ object.pk }} • GestorPro</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-gray-50 flex">
@@ -14,11 +14,13 @@
       <div class="flex items-start sm:items-center justify-between gap-4 mb-2">
         <div>
           <div class="flex items-center gap-3">
-            <h1 class="text-2xl font-semibold text-gray-900">Compra #{{ object.pk }}</h1>
+            <h1 class="text-2xl font-semibold text-gray-900">Ordem de Compra #{{ object.pk }}</h1>
             {% if object.status == "RASCUNHO" %}
               <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">Rascunho</span>
             {% elif object.status == "CONFIRMADA" %}
               <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Confirmada</span>
+            {% elif object.status == "ENTREGUE" %}
+              <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">Entregue</span>
             {% elif object.status == "CANCELADA" %}
               <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">Cancelada</span>
             {% endif %}
@@ -40,31 +42,35 @@
           </a>
           
           {% if object.status == "RASCUNHO" %}
-            <form method="post" action="{% url "confirmar_compra_view" object.pk %}" class="inline">
+            <form method="post" action="{% url 'confirmar_compra_view' object.pk %}" class="inline">
               {% csrf_token %}
-              <button
-                type="submit"
-                class="inline-flex items-center rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors"
-              >
-                Confirmar Compra
+              <button type="submit" class="inline-flex items-center rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors">
+                Confirmar Ordem
               </button>
             </form>
-            <form method="post" action="{% url "cancelar_compra_view" object.pk %}" class="inline">
+            <form method="post" action="{% url 'cancelar_compra_view' object.pk %}" class="inline">
               {% csrf_token %}
-              <button
-                type="submit"
-                class="inline-flex items-center rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
-              >
-                Cancelar Compra
+              <button type="submit" class="inline-flex items-center rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors">
+                Cancelar Ordem
               </button>
             </form>
           {% elif object.status == "CONFIRMADA" %}
-            <form method="post" action="{% url "cancelar_compra_view" object.pk %}" class="inline">
+            <form method="post" action="{% url 'confirmar_entrega_view' object.pk %}" class="inline">
               {% csrf_token %}
-              <button
-                type="submit"
-                class="inline-flex items-center rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
-              >
+              <button type="submit" class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors">
+                Confirmar Entrega
+              </button>
+            </form>
+            <form method="post" action="{% url 'cancelar_compra_view' object.pk %}" class="inline">
+              {% csrf_token %}
+              <button type="submit" class="inline-flex items-center rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors">
+                Cancelar Ordem
+              </button>
+            </form>
+          {% elif object.status == "ENTREGUE" %}
+            <form method="post" action="{% url 'cancelar_compra_view' object.pk %}" class="inline" onsubmit="return confirm('Ao cancelar uma ordem já entregue, o estoque será estornado. Deseja continuar?');">
+              {% csrf_token %}
+              <button type="submit" class="inline-flex items-center rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors">
                 Cancelar (Estornar)
               </button>
             </form>
@@ -82,45 +88,19 @@
         </div>
       {% endif %}
 
-      {% if object.is_editable %}
-      <section class="bg-white border border-gray-200 rounded-xl shadow-sm p-5">
-        <h2 class="text-base font-semibold text-gray-900 mb-4">Adicionar Fornecedor</h2>
-        <form method="post" action="{% url "adicionar_fornecedor" object.pk %}" class="flex items-end gap-3">
-          {% csrf_token %}
-          <div class="flex-1">
-            <label for="{{ fornecedor_form.fornecedor.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Fornecedor</label>
-            {{ fornecedor_form.fornecedor }}
-          </div>
-          <button type="submit" class="inline-flex items-center rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-800 transition-colors">
-            Adicionar
-          </button>
-        </form>
-      </section>
-      {% endif %}
-
       <div class="space-y-4">
-        <h2 class="text-lg font-semibold text-gray-900">Grupos de Fornecedores</h2>
+        <h2 class="text-lg font-semibold text-gray-900">Itens da Ordem - Fornecedor: {{ object.fornecedor.nome|default:"-" }}</h2>
         
-        {% for grupo in grupos %}
           <section class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-            <div class="px-5 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
-              <h3 class="text-base font-medium text-gray-900">{{ grupo.fornecedor.nome }}</h3>
-              
-              {% if object.is_editable %}
-                <form method="post" action="{% url "remover_fornecedor" object.pk grupo.pk %}" onsubmit="return confirm('Deseja realmente remover este fornecedor e todos os seus itens?');">
-                  {% csrf_token %}
-                  <button type="submit" class="text-sm text-red-600 hover:text-red-800 font-medium">Remover fornecedor</button>
-                </form>
-              {% endif %}
-            </div>
-
             {% if object.is_editable %}
             <div class="px-5 py-4 border-b border-gray-100 bg-white">
-              <form method="post" action="{% url "adicionar_item" object.pk grupo.pk %}" class="flex flex-wrap items-end gap-3">
+              <form method="post" action="{% url 'adicionar_item' object.pk %}" class="flex flex-wrap items-end gap-3">
                 {% csrf_token %}
                 <div class="w-full sm:flex-1 min-w-[200px]">
-                  <label for="produto" class="mb-1.5 block text-xs font-medium text-gray-700">Produto</label>
-                  {{ item_form.produto }}
+                  <label for="id_produto" class="mb-1.5 block text-xs font-medium text-gray-700">Produto</label>
+                  <select name="produto" id="id_produto" required class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 placeholder-gray-400 shadow-sm transition focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/20">
+                    <option value="">Carregando produtos...</option>
+                  </select>
                 </div>
                 <div class="w-24">
                   <label for="quantidade" class="mb-1.5 block text-xs font-medium text-gray-700">Qtd</label>
@@ -151,7 +131,7 @@
                   </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-100">
-                  {% for item in grupo.itens.all %}
+                  {% for item in itens %}
                     <tr class="hover:bg-gray-50 transition-colors">
                       <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-900">{{ item.produto.nome }}</td>
                       <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-700 text-right">{{ item.quantidade }}</td>
@@ -161,7 +141,7 @@
                       </td>
                       {% if object.is_editable %}
                       <td class="px-5 py-3 whitespace-nowrap text-right">
-                        <form method="post" action="{% url "remover_item" object.pk item.pk %}">
+                        <form method="post" action="{% url 'remover_item' object.pk item.pk %}">
                           {% csrf_token %}
                           <button type="submit" class="text-red-600 hover:text-red-800 text-xs font-medium">Remover</button>
                         </form>
@@ -171,7 +151,7 @@
                   {% empty %}
                     <tr>
                       <td colspan="{% if object.is_editable %}5{% else %}4{% endif %}" class="px-5 py-4 text-center text-sm text-gray-500">
-                        Nenhum item adicionado para este fornecedor.
+                        Nenhum item adicionado à esta ordem.
                       </td>
                     </tr>
                   {% endfor %}
@@ -179,13 +159,37 @@
               </table>
             </div>
           </section>
-        {% empty %}
-          <div class="text-center py-10 bg-white border border-gray-200 rounded-xl shadow-sm">
-            <p class="text-sm text-gray-600">Nenhum fornecedor adicionado à compra.</p>
-          </div>
-        {% endfor %}
       </div>
     </div>
   </main>
+
+  {% if object.is_editable and object.fornecedor %}
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const selectProd = document.getElementById("id_produto");
+      const fornecedorId = "{{ object.fornecedor.id }}";
+      
+      fetch(`/api/fornecedores/${fornecedorId}/produtos/`)
+        .then(res => res.json())
+        .then(data => {
+          selectProd.innerHTML = '<option value="">--- Selecione um Produto ---</option>';
+          if(data.length === 0){
+             selectProd.innerHTML = '<option value="">Nenhum produto cadastrado para este fornecedor</option>';
+          } else {
+             data.forEach(p => {
+               const opt = document.createElement("option");
+               opt.value = p.id;
+               opt.textContent = p.nome;
+               selectProd.appendChild(opt);
+             });
+          }
+        })
+        .catch(err => {
+           console.error(err);
+           selectProd.innerHTML = '<option value="">Erro ao buscar produtos</option>';
+        });
+    });
+  </script>
+  {% endif %}
 </body>
 </html>
