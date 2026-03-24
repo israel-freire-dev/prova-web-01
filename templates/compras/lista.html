@@ -52,18 +52,16 @@
                     <div class="text-gray-700">{{ c.data|date:"d/m/Y" }}</div>
                   </td>
                   <td class="px-5 py-4 whitespace-nowrap">
-                    {% for grupo in c.grupos.all %}
-                      <div class="text-xs text-gray-900 border border-gray-100 bg-gray-50 px-2 py-0.5 rounded w-fit mb-1 max-w-[150px] truncate" title="{{ grupo.fornecedor.nome }}">{{ grupo.fornecedor.nome }}</div>
-                    {% empty %}
+                    {% if c.fornecedor %}
+                      <div class="text-xs text-gray-900 border border-gray-100 bg-gray-50 px-2 py-0.5 rounded w-fit mb-1 max-w-[150px] truncate" title="{{ c.fornecedor.nome }}">{{ c.fornecedor.nome }}</div>
+                    {% else %}
                       <span class="text-gray-400 text-xs italic">-</span>
-                    {% endfor %}
+                    {% endif %}
                   </td>
                   <td class="px-5 py-4 whitespace-nowrap text-xs text-gray-500">
-                    <div class="max-w-[200px] truncate" title="{% for grupo in c.grupos.all %}{% for item in grupo.itens.all %}{{ item.produto.nome }}{% if not forloop.last %}, {% endif %}{% endfor %}{% endfor %}">
-                      {% for grupo in c.grupos.all %}
-                        {% for item in grupo.itens.all %}
-                          {{ item.produto.nome }}{% if not forloop.last %}, {% endif %}
-                        {% endfor %}
+                    <div class="max-w-[200px] truncate" title="{% for item in c.itens.all %}{{ item.produto.nome }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+                      {% for item in c.itens.all %}
+                        {{ item.produto.nome }}{% if not forloop.last %}, {% endif %}
                       {% empty %}
                         <span class="text-gray-400 italic">-</span>
                       {% endfor %}

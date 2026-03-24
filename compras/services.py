@@ -15,13 +15,11 @@ def _listar_itens(compra: Compra) -> list[ItemCompra]:
     return list(
         ItemCompra.objects.select_related(
             "produto",
-            "compra_fornecedor",
-            "compra_fornecedor__fornecedor",
-            "compra_fornecedor__compra",
+            "compra",
+            "compra__fornecedor",
         )
-        .filter(compra_fornecedor__compra=compra)
+        .filter(compra=compra)
         .order_by(
-            "compra_fornecedor__fornecedor_id",
             "produto_id",
             "id",
         )

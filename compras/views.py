@@ -11,8 +11,8 @@ from rest_framework import status  # pyright: ignore[reportMissingImports]
 from rest_framework.decorators import api_view  # pyright: ignore[reportMissingImports]
 from rest_framework.response import Response  # pyright: ignore[reportMissingImports]
 
-from .forms import CompraForm, CompraFornecedorForm, ItemCompraForm
-from .models import Compra, CompraFornecedor, ItemCompra
+from .forms import CompraForm, ItemCompraForm
+from .models import Compra, ItemCompra
 from .serializers import CompraSerializer
 from .services import cancelar_compra, confirmar_compra
 
@@ -50,6 +50,18 @@ def post_cancelar_compra(request, compra_id: int):
     return Response(CompraSerializer(compra).data)
 
 
+from django.http import JsonResponse
+from produtos.models import Produto
+
+@login_required
+def get_produtos_fornecedor_api(request, fornecedor_id):
+    # Endpoint simplificado que retorna JSON com id, nome de produtos de um fornecedor
+    produtos = Produto.objects.filter(fornecedor_id=fornecedor_id, ativo=True)
+    dados = [{"id": p.id, "nome": p.nome} for p in produtos]
+    return JsonResponse(dados, safe=False)
+
+
+
 # --- Template Views ---
 
 class CompraListView(LoginRequiredMixin, ListView):
@@ -59,10 +71,9 @@ class CompraListView(LoginRequiredMixin, ListView):
     ordering = ["-id"]
 
     def get_queryset(self):
-        # Otimiza a listagem carregando previamente Fornecedores e Produtos
-        return super().get_queryset().prefetch_related(
-            "grupos__fornecedor",
-            "grupos__itens__produto"
+        # Otimiza a listagem carregando previamente Fornecedor e Produtos
+        return super().get_queryset().select_related("fornecedor").prefetch_related(
+            "itens__produto"
         )
 
 
@@ -112,71 +123,37 @@ class CompraDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         compra = self.object
         
-        # Pre-fetch grupos com os itens e produto
-        context["grupos"] = compra.grupos.prefetch_related("itens__produto").select_related("fornecedor").all()
+        # Pre-fetch itens e produto
+        context["itens"] = compra.itens.select_related("produto").all()
         
         if compra.is_editable:
-            context["fornecedor_form"] = CompraFornecedorForm()
             context["item_form"] = ItemCompraForm()
+            # O form de itens não deveria carregar todos, mas sim os específicos do fornecedor
+            # Faremos isso via JS no template, mas inicializamos vazio
+            if context["item_form"].fields.get("produto"):
+                from produtos.models import Produto
+                context["item_form"].fields["produto"].queryset = Produto.objects.filter(fornecedor=compra.fornecedor, ativo=True)
             
         return context
 
 
 @login_required
 @require_POST
-def adicionar_fornecedor(request, pk):
-    compra = get_object_or_404(Compra, pk=pk)
+def adicionar_item(request, compra_pk):
+    compra = get_object_or_404(Compra, pk=compra_pk)
     
     if not compra.is_editable:
-        messages.error(request, "Não é possível alterar uma ordem de compra não-rascunho.")
-        return redirect("detalhes_compra", pk=pk)
-
-    form = CompraFornecedorForm(request.POST)
-    if form.is_valid():
-        try:
-            fornecedor = form.save(commit=False)
-            fornecedor.compra = compra
-            fornecedor.save()
-            messages.success(request, "Fornecedor adicionado com sucesso.")
-        except Exception as e:
-            messages.error(request, f"Erro ao adicionar fornecedor: Este fornecedor já pode estar na ordem.")
-    else:
-        messages.error(request, "Erro no formulário de fornecedor.")
-        
-    return redirect("detalhes_compra", pk=pk)
-
-
-@login_required
-@require_POST
-def remover_fornecedor(request, compra_pk, grupo_pk):
-    grupo = get_object_or_404(CompraFornecedor, pk=grupo_pk, compra_id=compra_pk)
-    
-    if not grupo.compra.is_editable:
-        messages.error(request, "Não é possível alterar uma ordem de compra não-rascunho.")
-    else:
-        grupo.delete()
-        messages.success(request, "Fornecedor removido com sucesso.")
-        
-    return redirect("detalhes_compra", pk=compra_pk)
-
-
-@login_required
-@require_POST
-def adicionar_item(request, compra_pk, grupo_pk):
-    grupo = get_object_or_404(CompraFornecedor, pk=grupo_pk, compra_id=compra_pk)
-    
-    if not grupo.compra.is_editable:
         messages.error(request, "Não é possível alterar itens em ordem não-rascunho.")
         return redirect("detalhes_compra", pk=compra_pk)
 
     form = ItemCompraForm(request.POST)
-    form.instance.compra_fornecedor = grupo
+    form.instance.compra = compra
     if form.is_valid():
         try:
             form.save()
             messages.success(request, "Item adicionado com sucesso.")
         except Exception as e:
-            messages.error(request, "Erro ao adicionar item. Talvez o produto já esteja neste fornecedor.")
+            messages.error(request, "Erro ao adicionar item. Talvez o produto já esteja na ordem.")
     else:
         messages.error(request, "Dados inválidos para o item.")
         
@@ -186,9 +163,9 @@ def adicionar_item(request, compra_pk, grupo_pk):
 @login_required
 @require_POST
 def remover_item(request, compra_pk, item_pk):
-    item = get_object_or_404(ItemCompra, pk=item_pk, compra_fornecedor__compra_id=compra_pk)
+    item = get_object_or_404(ItemCompra, pk=item_pk, compra_id=compra_pk)
     
-    if not item.compra_fornecedor.compra.is_editable:
+    if not item.compra.is_editable:
         messages.error(request, "Não é possível remover itens em ordem não-rascunho.")
     else:
         item.delete()

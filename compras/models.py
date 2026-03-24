@@ -14,6 +14,7 @@ class Compra(models.Model):
         CANCELADA = "CANCELADA", "Cancelada"
 
     data = models.DateField(verbose_name="Data da compra", default=timezone.now)
+    fornecedor = models.ForeignKey(Fornecedor, on_delete=models.PROTECT, null=True, verbose_name="Fornecedor")
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
@@ -30,30 +31,9 @@ class Compra(models.Model):
         return self.status == self.Status.RASCUNHO
 
 
-class CompraFornecedor(models.Model):
-    compra = models.ForeignKey(Compra, on_delete=models.CASCADE, related_name="grupos")
-    fornecedor = models.ForeignKey(Fornecedor, on_delete=models.PROTECT)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["compra", "fornecedor"],
-                name="uniq_compra_fornecedor_grupo",
-            )
-        ]
-
-    def __str__(self) -> str:
-        return f"{self.compra} - {self.fornecedor}"
-
-    def clean(self) -> None:
-        super().clean()
-        if self.compra_id and not self.compra.is_editable:
-            raise ValidationError("Não é possível alterar fornecedores em compra não rascunho.")
-
-
 class ItemCompra(models.Model):
-    compra_fornecedor = models.ForeignKey(
-        CompraFornecedor, on_delete=models.CASCADE, related_name="itens"
+    compra = models.ForeignKey(
+        Compra, on_delete=models.CASCADE, related_name="itens", null=True
     )
     produto = models.ForeignKey(Produto, on_delete=models.PROTECT)
     quantidade = models.PositiveIntegerField(
@@ -69,8 +49,8 @@ class ItemCompra(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["compra_fornecedor", "produto"],
-                name="uniq_item_por_produto_no_fornecedor",
+                fields=["compra", "produto"],
+                name="uniq_item_por_produto_na_compra",
             )
         ]
 
@@ -79,6 +59,5 @@ class ItemCompra(models.Model):
 
     def clean(self) -> None:
         super().clean()
-        compra = getattr(self.compra_fornecedor, "compra", None)
-        if compra and not compra.is_editable:
+        if self.compra and not self.compra.is_editable:
             raise ValidationError("Não é possível alterar itens em compra não rascunho.")
