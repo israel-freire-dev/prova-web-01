@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compras • GestorPro</title>
+  <title>Ordens de Compra • GestorPro</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-gray-50 flex">
@@ -13,21 +13,21 @@
     <div class="max-w-6xl mx-auto">
       <div class="flex items-start sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 class="text-2xl font-semibold text-gray-900">Compras</h1>
-          <p class="text-sm text-gray-600 mt-1">Gerencie as compras e entradas de estoque.</p>
+          <h1 class="text-2xl font-semibold text-gray-900">Ordens de Compra</h1>
+          <p class="text-sm text-gray-600 mt-1">Gerencie as ordens de compra e entradas de estoque.</p>
         </div>
         <a
           href="{% url "criar_compra" %}"
           class="inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-gray-800 transition-colors"
         >
           <span class="text-lg leading-none">+</span>
-          Nova compra
+          Nova ordem
         </a>
       </div>
 
       <section class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
         <div class="px-5 py-4 border-b border-gray-200">
-          <p class="text-sm font-medium text-gray-900">Lista de compras</p>
+          <p class="text-sm font-medium text-gray-900">Lista de ordens de compra</p>
         </div>
 
         <div class="overflow-x-auto">
@@ -36,6 +36,8 @@
               <tr>
                 <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
                 <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Data</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fornecedores</th>
+                <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Produtos</th>
                 <th scope="col" class="px-5 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
                 <th scope="col" class="px-5 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Ações</th>
               </tr>
@@ -48,6 +50,24 @@
                   </td>
                   <td class="px-5 py-4 whitespace-nowrap">
                     <div class="text-gray-700">{{ c.data|date:"d/m/Y" }}</div>
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap">
+                    {% for grupo in c.grupos.all %}
+                      <div class="text-xs text-gray-900 border border-gray-100 bg-gray-50 px-2 py-0.5 rounded w-fit mb-1 max-w-[150px] truncate" title="{{ grupo.fornecedor.nome }}">{{ grupo.fornecedor.nome }}</div>
+                    {% empty %}
+                      <span class="text-gray-400 text-xs italic">-</span>
+                    {% endfor %}
+                  </td>
+                  <td class="px-5 py-4 whitespace-nowrap text-xs text-gray-500">
+                    <div class="max-w-[200px] truncate" title="{% for grupo in c.grupos.all %}{% for item in grupo.itens.all %}{{ item.produto.nome }}{% if not forloop.last %}, {% endif %}{% endfor %}{% endfor %}">
+                      {% for grupo in c.grupos.all %}
+                        {% for item in grupo.itens.all %}
+                          {{ item.produto.nome }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                      {% empty %}
+                        <span class="text-gray-400 italic">-</span>
+                      {% endfor %}
+                    </div>
                   </td>
                   <td class="px-5 py-4 whitespace-nowrap">
                     {% if c.status == "RASCUNHO" %}
@@ -89,13 +109,13 @@
                 </tr>
               {% empty %}
                 <tr>
-                  <td colspan="4" class="px-5 py-10 text-center">
-                    <p class="text-sm text-gray-600">Nenhuma compra registrada ainda.</p>
+                  <td colspan="6" class="px-5 py-10 text-center">
+                    <p class="text-sm text-gray-600">Nenhuma ordem de compra registrada ainda.</p>
                     <a
                       href="{% url "criar_compra" %}"
                       class="inline-flex items-center mt-3 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 transition-colors"
                     >
-                      Registrar primeira compra
+                      Registrar primeira ordem
                     </a>
                   </td>
                 </tr>

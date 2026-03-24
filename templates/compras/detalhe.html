@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Detalhes da Compra #{{ object.pk }} • GestorPro</title>
+  <title>Ordem de Compra #{{ object.pk }} • GestorPro</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen bg-gray-50 flex">
@@ -14,7 +14,7 @@
       <div class="flex items-start sm:items-center justify-between gap-4 mb-2">
         <div>
           <div class="flex items-center gap-3">
-            <h1 class="text-2xl font-semibold text-gray-900">Compra #{{ object.pk }}</h1>
+            <h1 class="text-2xl font-semibold text-gray-900">Ordem de Compra #{{ object.pk }}</h1>
             {% if object.status == "RASCUNHO" %}
               <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">Rascunho</span>
             {% elif object.status == "CONFIRMADA" %}
@@ -46,7 +46,7 @@
                 type="submit"
                 class="inline-flex items-center rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors"
               >
-                Confirmar Compra
+                Confirmar Ordem
               </button>
             </form>
             <form method="post" action="{% url "cancelar_compra_view" object.pk %}" class="inline">
@@ -55,7 +55,7 @@
                 type="submit"
                 class="inline-flex items-center rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
               >
-                Cancelar Compra
+                Cancelar Ordem
               </button>
             </form>
           {% elif object.status == "CONFIRMADA" %}
@@ -181,7 +181,7 @@
           </section>
         {% empty %}
           <div class="text-center py-10 bg-white border border-gray-200 rounded-xl shadow-sm">
-            <p class="text-sm text-gray-600">Nenhum fornecedor adicionado à compra.</p>
+            <p class="text-sm text-gray-600">Nenhum fornecedor adicionado à ordem de compra.</p>
           </div>
         {% endfor %}
       </div>

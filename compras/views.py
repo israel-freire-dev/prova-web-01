@@ -58,6 +58,13 @@ class CompraListView(LoginRequiredMixin, ListView):
     context_object_name = "compras"
     ordering = ["-id"]
 
+    def get_queryset(self):
+        # Otimiza a listagem carregando previamente Fornecedores e Produtos
+        return super().get_queryset().prefetch_related(
+            "grupos__fornecedor",
+            "grupos__itens__produto"
+        )
+
 
 class CompraCreateView(LoginRequiredMixin, CreateView):
     model = Compra
@@ -79,7 +86,7 @@ class CompraUpdateView(LoginRequiredMixin, UpdateView):
     def dispatch(self, request, *args, **kwargs):
         compra = self.get_object()
         if not compra.is_editable:
-            messages.error(request, "Não é possível editar uma compra que não está em rascunho.")
+            messages.error(request, "Não é possível editar uma ordem de compra que não está em rascunho.")
             return redirect("detalhes_compra", pk=compra.pk)
         return super().dispatch(request, *args, **kwargs)
 
@@ -92,7 +99,7 @@ class CompraDeleteView(LoginRequiredMixin, DeleteView):
     def dispatch(self, request, *args, **kwargs):
         compra = self.get_object()
         if not compra.is_editable:
-            messages.error(request, "Não é possível excluir uma compra que não está em rascunho.")
+            messages.error(request, "Não é possível excluir uma ordem de compra que não está em rascunho.")
             return redirect("detalhes_compra", pk=compra.pk)
         return super().dispatch(request, *args, **kwargs)
 
@@ -121,7 +128,7 @@ def adicionar_fornecedor(request, pk):
     compra = get_object_or_404(Compra, pk=pk)
     
     if not compra.is_editable:
-        messages.error(request, "Não é possível alterar uma compra não rascunho.")
+        messages.error(request, "Não é possível alterar uma ordem de compra não-rascunho.")
         return redirect("detalhes_compra", pk=pk)
 
     form = CompraFornecedorForm(request.POST)
@@ -132,7 +139,7 @@ def adicionar_fornecedor(request, pk):
             fornecedor.save()
             messages.success(request, "Fornecedor adicionado com sucesso.")
         except Exception as e:
-            messages.error(request, f"Erro ao adicionar fornecedor: Este fornecedor já pode estar na compra.")
+            messages.error(request, f"Erro ao adicionar fornecedor: Este fornecedor já pode estar na ordem.")
     else:
         messages.error(request, "Erro no formulário de fornecedor.")
         
@@ -145,7 +152,7 @@ def remover_fornecedor(request, compra_pk, grupo_pk):
     grupo = get_object_or_404(CompraFornecedor, pk=grupo_pk, compra_id=compra_pk)
     
     if not grupo.compra.is_editable:
-        messages.error(request, "Não é possível alterar uma compra não rascunho.")
+        messages.error(request, "Não é possível alterar uma ordem de compra não-rascunho.")
     else:
         grupo.delete()
         messages.success(request, "Fornecedor removido com sucesso.")
@@ -159,7 +166,7 @@ def adicionar_item(request, compra_pk, grupo_pk):
     grupo = get_object_or_404(CompraFornecedor, pk=grupo_pk, compra_id=compra_pk)
     
     if not grupo.compra.is_editable:
-        messages.error(request, "Não é possível alterar itens em compra não rascunho.")
+        messages.error(request, "Não é possível alterar itens em ordem não-rascunho.")
         return redirect("detalhes_compra", pk=compra_pk)
 
     form = ItemCompraForm(request.POST)
@@ -182,7 +189,7 @@ def remover_item(request, compra_pk, item_pk):
     item = get_object_or_404(ItemCompra, pk=item_pk, compra_fornecedor__compra_id=compra_pk)
     
     if not item.compra_fornecedor.compra.is_editable:
-        messages.error(request, "Não é possível remover itens em compra não rascunho.")
+        messages.error(request, "Não é possível remover itens em ordem não-rascunho.")
     else:
         item.delete()
         messages.success(request, "Item removido com sucesso.")
@@ -195,11 +202,11 @@ def remover_item(request, compra_pk, item_pk):
 def confirmar_compra_view(request, pk):
     try:
         confirmar_compra(pk)
-        messages.success(request, "Compra confirmada com sucesso. Estoque atualizado.")
+        messages.success(request, "Ordem de compra confirmada com sucesso. Estoque atualizado.")
     except ValidationError as e:
         messages.error(request, e.message)
     except Compra.DoesNotExist:
-        messages.error(request, "Compra não encontrada.")
+        messages.error(request, "Ordem não encontrada.")
     
     return redirect("detalhes_compra", pk=pk)
 
@@ -209,10 +216,10 @@ def confirmar_compra_view(request, pk):
 def cancelar_compra_view(request, pk):
     try:
         cancelar_compra(pk)
-        messages.success(request, "Compra cancelada com sucesso. Estoque atualizado.")
+        messages.success(request, "Ordem de compra cancelada com sucesso. Estoque atualizado.")
     except ValidationError as e:
         messages.error(request, e.message)
     except Compra.DoesNotExist:
-        messages.error(request, "Compra não encontrada.")
+        messages.error(request, "Ordem não encontrada.")
     
     return redirect("detalhes_compra", pk=pk)
