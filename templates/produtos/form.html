@@ -29,21 +29,100 @@
           <form method="post" class="space-y-6">
             {% csrf_token %}
 
-            <div class="space-y-5">
-              {% for field in form %}
-                <div>
-                  <label for="{{ field.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">
-                    {{ field.label }}
-                  </label>
-                  {{ field }}
-                  {% if field.errors %}
-                    <p class="mt-1.5 text-sm text-red-600">{{ field.errors.0 }}</p>
-                  {% endif %}
+            <!-- Identificação / Detalhes -->
+            <fieldset class="border border-gray-200 rounded-lg p-5">
+              <legend class="text-sm font-medium text-gray-900 px-2">Identificação / Detalhes</legend>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-3">
+                <div class="md:col-span-2">
+                  <label for="{{ form.nome.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Nome do Produto <span class="text-red-500">*</span></label>
+                  {{ form.nome }}
+                  {% if form.nome.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.nome.errors.0 }}</p>{% endif %}
                 </div>
-              {% endfor %}
-            </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.codigo.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Código / SKU</label>
+                  {{ form.codigo }}
+                  {% if form.codigo.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.codigo.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.fornecedor.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Fornecedor</label>
+                  {{ form.fornecedor }}
+                  {% if form.fornecedor.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.fornecedor.errors.0 }}</p>{% endif %}
+                </div>
+                
+                <div class="md:col-span-2">
+                  <label for="{{ form.descricao.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Descrição</label>
+                  {{ form.descricao }}
+                  {% if form.descricao.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.descricao.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.categoria.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Categoria</label>
+                  {{ form.categoria }}
+                  {% if form.categoria.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.categoria.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.marca.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Marca</label>
+                  {{ form.marca }}
+                  {% if form.marca.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.marca.errors.0 }}</p>{% endif %}
+                </div>
+              </div>
+            </fieldset>
 
-            <div class="flex items-center justify-end gap-3 pt-2">
+            <!-- Financeiro & Estoque -->
+            <fieldset class="border border-gray-200 rounded-lg p-5">
+              <legend class="text-sm font-medium text-gray-900 px-2">Financeiro & Estoque</legend>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-3">
+                <div class="md:col-span-1">
+                  <label for="{{ form.preco_custo.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Preço Custo</label>
+                  {{ form.preco_custo }}
+                  {% if form.preco_custo.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.preco_custo.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.preco_venda.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Preço Venda <span class="text-red-500">*</span></label>
+                  {{ form.preco_venda }}
+                  {% if form.preco_venda.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.preco_venda.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.unidade_medida.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Unidade de Medida <span class="text-red-500">*</span></label>
+                  {{ form.unidade_medida }}
+                  {% if form.unidade_medida.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.unidade_medida.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.data_validade.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Validade</label>
+                  {{ form.data_validade }}
+                  {% if form.data_validade.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.data_validade.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div class="md:col-span-1">
+                  <label for="{{ form.quantidade.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Qtd. em Estoque <span class="text-red-500">*</span></label>
+                  {{ form.quantidade }}
+                  {% if form.quantidade.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.quantidade.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.estoque_minimo.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Estoque Mínimo <span class="text-red-500">*</span></label>
+                  {{ form.estoque_minimo }}
+                  {% if form.estoque_minimo.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.estoque_minimo.errors.0 }}</p>{% endif %}
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Outras Informações -->
+            <fieldset class="border border-gray-200 rounded-lg p-5">
+              <legend class="text-sm font-medium text-gray-900 px-2">Outras Informações</legend>
+              <div class="space-y-4 mt-3">
+                <div class="flex items-center gap-2">
+                  {{ form.ativo }}
+                  <label for="{{ form.ativo.id_for_label }}" class="text-sm font-medium text-gray-700 cursor-pointer">Produto Ativo no Sistema</label>
+                  {% if form.ativo.errors %}<p class="mt-1.5 text-sm text-red-600 ml-2">{{ form.ativo.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                  <label for="{{ form.observacoes.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Observações Extras / Detalhes</label>
+                  {{ form.observacoes }}
+                  {% if form.observacoes.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.observacoes.errors.0 }}</p>{% endif %}
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 mt-6">
               <a
                 href="{% url "listar_produtos" %}"
                 class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 transition-colors"

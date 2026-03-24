@@ -29,34 +29,141 @@
           <form method="post" class="space-y-6">
             {% csrf_token %}
 
-            <div class="space-y-5">
-              {% for field in form %}
-                {% if field.name == "is_active" %}
-                  <div class="flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
-                    <div>
-                      <p class="text-sm font-medium text-gray-800">Fornecedor ativo</p>
-                      <p class="text-xs text-gray-500">Desmarque para indicar que este fornecedor está inativo.</p>
-                      {% if field.errors %}
-                        <p class="mt-1.5 text-sm text-red-600">{{ field.errors.0 }}</p>
-                      {% endif %}
-                    </div>
-                    <div class="shrink-0">
-                      {{ field }}
-                    </div>
-                  </div>
-                {% else %}
-                  <div>
-                    <label for="{{ field.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">
-                      {{ field.label }}
-                    </label>
-                    {{ field }}
-                    {% if field.errors %}
-                      <p class="mt-1.5 text-sm text-red-600">{{ field.errors.0 }}</p>
-                    {% endif %}
-                  </div>
-                {% endif %}
-              {% endfor %}
-            </div>
+            <!-- Identificação -->
+            <fieldset class="border border-gray-200 rounded-lg p-5">
+              <legend class="text-sm font-medium text-gray-900 px-2">Identificação</legend>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-3">
+                <div class="md:col-span-2">
+                  <label for="{{ form.nome.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Razão Social / Nome <span class="text-red-500">*</span></label>
+                  {{ form.nome }}
+                  {% if form.nome.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.nome.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.cnpj.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">CNPJ</label>
+                  {{ form.cnpj }}
+                  {% if form.cnpj.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.cnpj.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.categoria.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Categoria</label>
+                  {{ form.categoria }}
+                  {% if form.categoria.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.categoria.errors.0 }}</p>{% endif %}
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Endereço -->
+            <fieldset class="border border-gray-200 rounded-lg p-5">
+              <legend class="text-sm font-medium text-gray-900 px-2">Endereço de Faturamento</legend>
+              <div class="grid grid-cols-1 md:grid-cols-6 gap-4 mt-3">
+                <div class="md:col-span-2">
+                  <label for="{{ form.cep.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">CEP</label>
+                  {{ form.cep }}
+                  {% if form.cep.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.cep.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-3">
+                  <label for="{{ form.endereco.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Endereço (Rua/Av)</label>
+                  {{ form.endereco }}
+                  {% if form.endereco.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.endereco.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.numero.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Número</label>
+                  {{ form.numero }}
+                  {% if form.numero.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.numero.errors.0 }}</p>{% endif %}
+                </div>
+
+                <div class="md:col-span-2">
+                  <label for="{{ form.complemento.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Complemento</label>
+                  {{ form.complemento }}
+                  {% if form.complemento.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.complemento.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-2">
+                  <label for="{{ form.bairro.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Bairro</label>
+                  {{ form.bairro }}
+                  {% if form.bairro.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.bairro.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.cidade.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Cidade</label>
+                  {{ form.cidade }}
+                  {% if form.cidade.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.cidade.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.estado.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Estado</label>
+                  {{ form.estado }}
+                  {% if form.estado.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.estado.errors.0 }}</p>{% endif %}
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Contatos & Web -->
+            <fieldset class="border border-gray-200 rounded-lg p-5">
+              <legend class="text-sm font-medium text-gray-900 px-2">Contatos & Web</legend>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-3">
+                <div class="md:col-span-2">
+                  <label for="{{ form.nome_representante.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Nome Representante / Vendedor</label>
+                  {{ form.nome_representante }}
+                  {% if form.nome_representante.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.nome_representante.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-2">
+                  <label for="{{ form.email.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Email Corporativo</label>
+                  {{ form.email }}
+                  {% if form.email.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.email.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-2">
+                  <label for="{{ form.telefone.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Telefone / Fixo</label>
+                  {{ form.telefone }}
+                  {% if form.telefone.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.telefone.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-2">
+                  <label for="{{ form.site.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Site Institucional</label>
+                  {{ form.site }}
+                  {% if form.site.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.site.errors.0 }}</p>{% endif %}
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Financeiro (Dados Bancários) -->
+            <fieldset class="border border-gray-200 rounded-lg p-5">
+              <legend class="text-sm font-medium text-gray-900 px-2">Dados Bancários / Pagamento</legend>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-3">
+                <div class="md:col-span-1">
+                  <label for="{{ form.banco.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Banco</label>
+                  {{ form.banco }}
+                  {% if form.banco.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.banco.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.agencia.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Agência</label>
+                  {{ form.agencia }}
+                  {% if form.agencia.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.agencia.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.conta.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Conta Corrente</label>
+                  {{ form.conta }}
+                  {% if form.conta.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.conta.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.chave_pix.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Chave PIX</label>
+                  {{ form.chave_pix }}
+                  {% if form.chave_pix.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.chave_pix.errors.0 }}</p>{% endif %}
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Outras Informações -->
+            <fieldset class="border border-gray-200 rounded-lg p-5">
+              <legend class="text-sm font-medium text-gray-900 px-2">Outras Informações</legend>
+              <div class="space-y-4 mt-3">
+                <div class="flex items-center gap-2">
+                  {{ form.is_active }}
+                  <label for="{{ form.is_active.id_for_label }}" class="text-sm font-medium text-gray-700 cursor-pointer">Fornecedor Ativo no Sistema</label>
+                  {% if form.is_active.errors %}<p class="mt-1.5 text-sm text-red-600 ml-2">{{ form.is_active.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                  <label for="{{ form.observacoes.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Observações Extras / Termos Comerciais</label>
+                  {{ form.observacoes }}
+                  {% if form.observacoes.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.observacoes.errors.0 }}</p>{% endif %}
+                </div>
+              </div>
+            </fieldset>
 
             <div class="flex items-center justify-end gap-3 pt-2">
               <a
@@ -77,5 +184,72 @@
       </section>
     </div>
   </main>
+  <script>
+    // CNPJ Mask (00.000.000/0000-00)
+    const cnpjInput = document.getElementById('id_cnpj');
+    if (cnpjInput) {
+      cnpjInput.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 14) value = value.slice(0, 14);
+        value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+        value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+        value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+        value = value.replace(/(\d{4})(\d)/, '$1-$2');
+        e.target.value = value;
+      });
+    }
+
+    // Telefone Mask ((00) 00000-0000)
+    const telInput = document.getElementById('id_telefone');
+    if (telInput) {
+      telInput.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 11) value = value.slice(0, 11);
+        value = value.replace(/^(\d)/, '($1');
+        value = value.replace(/(.{3})(\d)/, '$1) $2');
+        if (value.length === 12) {
+            value = value.replace(/(.{8})(\d)/, '$1-$2');
+        } else if (value.length > 12) {
+            value = value.replace(/(.{9})(\d)/, '$1-$2');
+        }
+        e.target.value = value;
+      });
+    }
+
+    // CEP Mask (00000-000)
+    const cepInput = document.getElementById('id_cep');
+    if (cepInput) {
+      cepInput.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 8) value = value.slice(0, 8);
+        value = value.replace(/^(\d{5})(\d)/, '$1-$2');
+        e.target.value = value;
+      });
+    }
+
+    // Agência (apenas números, máx 4 dígitos)
+    const agInput = document.getElementById('id_agencia');
+    if (agInput) {
+      agInput.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, ''); // só números
+        if (value.length > 4) value = value.slice(0, 4); // Força o limite de 4 caracteres
+        e.target.value = value;
+      });
+    }
+
+    // Conta Corrente Mask Exata (00000-0, máximo 6 dígitos inseridos + 1 hífen)
+    const contaInput = document.getElementById('id_conta');
+    if (contaInput) {
+      contaInput.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/[^0-9xX]/gi, ''); // Permite apenas números e X
+        if (value.length > 6) value = value.slice(0, 6); // Limite de 6 caracteres lógicos base
+        
+        // Aplica a máscara apenas quando o 6º caractere chegar
+        value = value.replace(/^(.{5})(.{1})$/, '$1-$2');
+        
+        e.target.value = value.toUpperCase();
+      });
+    }
+  </script>
 </body>
 </html>

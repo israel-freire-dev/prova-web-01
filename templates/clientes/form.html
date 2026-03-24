@@ -29,21 +29,100 @@
           <form method="post" class="space-y-6">
             {% csrf_token %}
 
-            <div class="space-y-5">
-              {% for field in form %}
-                <div>
-                  <label for="{{ field.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">
-                    {{ field.label }}
-                  </label>
-                  {{ field }}
-                  {% if field.errors %}
-                    <p class="mt-1.5 text-sm text-red-600">{{ field.errors.0 }}</p>
-                  {% endif %}
+            <!-- Dados Pessoais -->
+            <fieldset class="border border-gray-200 rounded-lg p-5">
+              <legend class="text-sm font-medium text-gray-900 px-2">Dados Pessoais</legend>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-3">
+                <div class="md:col-span-2">
+                  <label for="{{ form.nome.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Nome / Razão Social <span class="text-red-500">*</span></label>
+                  {{ form.nome }}
+                  {% if form.nome.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.nome.errors.0 }}</p>{% endif %}
                 </div>
-              {% endfor %}
-            </div>
+                <div>
+                  <label for="{{ form.cpf.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">CPF <span class="text-red-500">*</span></label>
+                  {{ form.cpf }}
+                  {% if form.cpf.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.cpf.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                  <label for="{{ form.email.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">E-mail <span class="text-red-500">*</span></label>
+                  {{ form.email }}
+                  {% if form.email.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.email.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                  <label for="{{ form.telefone.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Telefone</label>
+                  {{ form.telefone }}
+                  {% if form.telefone.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.telefone.errors.0 }}</p>{% endif %}
+                </div>
+                <div>
+                  <label for="{{ form.data_nascimento.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Data de Nascimento</label>
+                  {{ form.data_nascimento }}
+                  {% if form.data_nascimento.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.data_nascimento.errors.0 }}</p>{% endif %}
+                </div>
+              </div>
+            </fieldset>
 
-            <div class="flex items-center justify-end gap-3 pt-2">
+            <!-- Endereço -->
+            <fieldset class="border border-gray-200 rounded-lg p-5">
+              <legend class="text-sm font-medium text-gray-900 px-2">Endereço</legend>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-3">
+                <div class="md:col-span-1">
+                  <label for="{{ form.cep.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">CEP</label>
+                  {{ form.cep }}
+                  {% if form.cep.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.cep.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-2">
+                  <label for="{{ form.endereco.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Logradouro (Rua, Av.)</label>
+                  {{ form.endereco }}
+                  {% if form.endereco.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.endereco.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.numero.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Número</label>
+                  {{ form.numero }}
+                  {% if form.numero.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.numero.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.complemento.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Complemento</label>
+                  {{ form.complemento }}
+                  {% if form.complemento.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.complemento.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.bairro.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Bairro / Distrito</label>
+                  {{ form.bairro }}
+                  {% if form.bairro.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.bairro.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.cidade.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Cidade / Município</label>
+                  {{ form.cidade }}
+                  {% if form.cidade.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.cidade.errors.0 }}</p>{% endif %}
+                </div>
+                <div class="md:col-span-1">
+                  <label for="{{ form.estado.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">UF</label>
+                  {{ form.estado }}
+                  {% if form.estado.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.estado.errors.0 }}</p>{% endif %}
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Outras Informações -->
+            <fieldset class="border border-gray-200 rounded-lg p-5">
+              <legend class="text-sm font-medium text-gray-900 px-2">Outras Informações</legend>
+              <div class="space-y-4 mt-3">
+                <!-- Checkbox -->
+                <div class="flex items-center gap-2">
+                  {{ form.ativo }}
+                  <label for="{{ form.ativo.id_for_label }}" class="text-sm font-medium text-gray-700 cursor-pointer">Cliente Ativo no Sistema</label>
+                  {% if form.ativo.errors %}<p class="mt-1.5 text-sm text-red-600 ml-2">{{ form.ativo.errors.0 }}</p>{% endif %}
+                </div>
+                <!-- Observações -->
+                <div>
+                  <label for="{{ form.observacoes.id_for_label }}" class="mb-1.5 block text-sm font-medium text-gray-700">Observações Extras / Detalhes do Cliente</label>
+                  {{ form.observacoes }}
+                  {% if form.observacoes.errors %}<p class="mt-1.5 text-sm text-red-600">{{ form.observacoes.errors.0 }}</p>{% endif %}
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 mt-6">
               <a
                 href="{% url "listar_clientes" %}"
                 class="inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 transition-colors"
@@ -62,5 +141,44 @@
       </section>
     </div>
   </main>
+
+  <!-- Script para Máscaras de Input -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cpfInput = document.getElementById('id_cpf');
+      const telefoneInput = document.getElementById('id_telefone');
+      const cepInput = document.getElementById('id_cep');
+
+      if (cpfInput) {
+        cpfInput.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, ''); // Remove não-números
+          if (value.length > 11) value = value.slice(0, 11);
+          value = value.replace(/(\d{3})(\d)/, '$1.$2');
+          value = value.replace(/(\d{3})(\d)/, '$1.$2');
+          value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+          e.target.value = value;
+        });
+      }
+
+      if (telefoneInput) {
+        telefoneInput.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, '');
+          if (value.length > 11) value = value.slice(0, 11);
+          value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+          value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+          e.target.value = value;
+        });
+      }
+
+      if (cepInput) {
+        cepInput.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, '');
+          if (value.length > 8) value = value.slice(0, 8);
+          value = value.replace(/(\d{5})(\d)/, '$1-$2');
+          e.target.value = value;
+        });
+      }
+    });
+  </script>
 </body>
 </html>
