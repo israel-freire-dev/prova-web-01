@@ -11,6 +11,7 @@ class Compra(models.Model):
     class Status(models.TextChoices):
         RASCUNHO = "RASCUNHO", "Rascunho"
         CONFIRMADA = "CONFIRMADA", "Confirmada"
+        ENTREGUE = "ENTREGUE", "Entregue"
         CANCELADA = "CANCELADA", "Cancelada"
 
     data = models.DateField(verbose_name="Data da compra", default=timezone.now)

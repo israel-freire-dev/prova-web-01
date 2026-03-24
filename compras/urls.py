@@ -14,6 +14,7 @@ urlpatterns = [
     path("compras/<int:compra_pk>/adicionar-item/", views.adicionar_item, name="adicionar_item"),
     path("compras/<int:compra_pk>/remover-item/<int:item_pk>/", views.remover_item, name="remover_item"),
     path("compras/<int:pk>/confirmar/", views.confirmar_compra_view, name="confirmar_compra_view"),
+    path("compras/<int:pk>/confirmar-entrega/", views.confirmar_entrega_view, name="confirmar_entrega_view"),
     path("compras/<int:pk>/cancelar/", views.cancelar_compra_view, name="cancelar_compra_view"),
 
     # Endpoint AJAX

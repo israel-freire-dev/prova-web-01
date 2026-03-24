@@ -14,7 +14,7 @@ from rest_framework.response import Response  # pyright: ignore[reportMissingImp
 from .forms import CompraForm, ItemCompraForm
 from .models import Compra, ItemCompra
 from .serializers import CompraSerializer
-from .services import cancelar_compra, confirmar_compra
+from .services import cancelar_compra, confirmar_compra, confirmar_entrega
 
 
 # --- API Views ---
@@ -179,7 +179,21 @@ def remover_item(request, compra_pk, item_pk):
 def confirmar_compra_view(request, pk):
     try:
         confirmar_compra(pk)
-        messages.success(request, "Ordem de compra confirmada com sucesso. Estoque atualizado.")
+        messages.success(request, "Ordem de compra confirmada com sucesso.")
+    except ValidationError as e:
+        messages.error(request, e.message)
+    except Compra.DoesNotExist:
+        messages.error(request, "Ordem não encontrada.")
+    
+    return redirect("detalhes_compra", pk=pk)
+
+
+@login_required
+@require_POST
+def confirmar_entrega_view(request, pk):
+    try:
+        confirmar_entrega(pk)
+        messages.success(request, "Entrega confirmada com sucesso. Estoque atualizado.")
     except ValidationError as e:
         messages.error(request, e.message)
     except Compra.DoesNotExist:
@@ -193,10 +207,11 @@ def confirmar_compra_view(request, pk):
 def cancelar_compra_view(request, pk):
     try:
         cancelar_compra(pk)
-        messages.success(request, "Ordem de compra cancelada com sucesso. Estoque atualizado.")
+        messages.success(request, "Ordem de compra cancelada com sucesso.")
     except ValidationError as e:
         messages.error(request, e.message)
     except Compra.DoesNotExist:
         messages.error(request, "Ordem não encontrada.")
     
     return redirect("detalhes_compra", pk=pk)
+

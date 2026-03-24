@@ -19,6 +19,8 @@
               <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">Rascunho</span>
             {% elif object.status == "CONFIRMADA" %}
               <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Confirmada</span>
+            {% elif object.status == "ENTREGUE" %}
+              <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">Entregue</span>
             {% elif object.status == "CANCELADA" %}
               <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">Cancelada</span>
             {% endif %}
@@ -40,31 +42,35 @@
           </a>
           
           {% if object.status == "RASCUNHO" %}
-            <form method="post" action="{% url "confirmar_compra_view" object.pk %}" class="inline">
+            <form method="post" action="{% url 'confirmar_compra_view' object.pk %}" class="inline">
               {% csrf_token %}
-              <button
-                type="submit"
-                class="inline-flex items-center rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors"
-              >
+              <button type="submit" class="inline-flex items-center rounded-lg bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors">
                 Confirmar Ordem
               </button>
             </form>
-            <form method="post" action="{% url "cancelar_compra_view" object.pk %}" class="inline">
+            <form method="post" action="{% url 'cancelar_compra_view' object.pk %}" class="inline">
               {% csrf_token %}
-              <button
-                type="submit"
-                class="inline-flex items-center rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
-              >
+              <button type="submit" class="inline-flex items-center rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors">
                 Cancelar Ordem
               </button>
             </form>
           {% elif object.status == "CONFIRMADA" %}
-            <form method="post" action="{% url "cancelar_compra_view" object.pk %}" class="inline">
+            <form method="post" action="{% url 'confirmar_entrega_view' object.pk %}" class="inline">
               {% csrf_token %}
-              <button
-                type="submit"
-                class="inline-flex items-center rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
-              >
+              <button type="submit" class="inline-flex items-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors">
+                Confirmar Entrega
+              </button>
+            </form>
+            <form method="post" action="{% url 'cancelar_compra_view' object.pk %}" class="inline">
+              {% csrf_token %}
+              <button type="submit" class="inline-flex items-center rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors">
+                Cancelar Ordem
+              </button>
+            </form>
+          {% elif object.status == "ENTREGUE" %}
+            <form method="post" action="{% url 'cancelar_compra_view' object.pk %}" class="inline" onsubmit="return confirm('Ao cancelar uma ordem já entregue, o estoque será estornado. Deseja continuar?');">
+              {% csrf_token %}
+              <button type="submit" class="inline-flex items-center rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors">
                 Cancelar (Estornar)
               </button>
             </form>
